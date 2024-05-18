@@ -1,0 +1,9 @@
+dash
+py3langid
+torch
+nltk
+dash_bootstrap_components
+gdown
+pandas
+matplotlib
+gunicorn‎
