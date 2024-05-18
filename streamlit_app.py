@@ -84,6 +84,7 @@ def display_home():
             
             paragraphs = text.split('\n\n')
             total_paragraphs = 0
+            ai_paragraph_count = 0  # Contador para los párrafos generados por IA
             
             st.markdown("<div style='text-align: center;'>AI-generated paragraphs are highlighted in <span style='color: red; font-weight: bold;'>red</span>, human-generated paragraphs are in <span style='color: green; font-weight: bold;'>green</span>.</div>", unsafe_allow_html=True)
             
@@ -93,8 +94,13 @@ def display_home():
                     ai_probability = predict(paragraph, model, word2idx)
                     if ai_probability > 99:
                         st.markdown(f"<div style='background-color: rgba(255, 0, 0, 0.05); color: red; padding: 8px; border-radius: 5px;'>{paragraph}</div>", unsafe_allow_html=True)
+                        ai_paragraph_count += 1  # Incrementar el contador si el párrafo fue generado por IA
                     else:
                         st.markdown(f"<div style='background-color: rgba(0, 255, 0, 0.05); color: green; padding: 8px; border-radius: 5px;'>{paragraph}</div>", unsafe_allow_html=True)
+            
+            # Calcular el porcentaje de párrafos generados por IA
+            ai_content_percentage = (ai_paragraph_count / total_paragraphs) * 100
+            st.markdown(f"<div style='text-align: center; padding: 20px;'>AI content percentage: {ai_content_percentage:.2f}%</div>", unsafe_allow_html=True)
             
         else:
             error_message = "Please enter text with more than 250 characters before detecting AI content." if not text else "Text must be longer than 250 characters."
