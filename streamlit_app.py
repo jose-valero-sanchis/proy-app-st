@@ -73,6 +73,8 @@ def detect_language(text):
 def display_home():
     st.title("Detect AI Content")
 
+    st.warning("Due to limited resources, the prediction may take some time (20s +-).")
+
     text = st.text_area("Enter your text:", height=200)
 
     if st.button("Detect AI Content"):
