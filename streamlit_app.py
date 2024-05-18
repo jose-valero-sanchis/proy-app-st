@@ -7,6 +7,8 @@ from fasttext_cnn import CNN_NLP
 import gdown
 from py3langid.langid import LanguageIdentifier, MODEL_FILE
 
+nltk.download('punkt')
+
 cache = {
     "models": {},
     "word2idx": {}
