@@ -6,6 +6,7 @@ import json
 from fasttext_cnn import CNN_NLP
 import gdown
 from py3langid.langid import LanguageIdentifier, MODEL_FILE
+import nltk
 
 nltk.download('punkt')
 
