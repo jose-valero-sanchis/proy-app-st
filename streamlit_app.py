@@ -81,8 +81,33 @@ def display_home():
     with col1:
         detect_button = st.button("Detect AI Content")
     with col2:
+        st.markdown(
+            """
+            <style>
+            .custom-checkbox {
+                margin-top: -20px; /* Ajusta este valor según sea necesario */
+                margin-left: -20px;
+            }
+            </style>
+            """, 
+            unsafe_allow_html=True
+        )
+        # Aplicar la clase custom-checkbox al checkbox
         show_details = st.checkbox("More details", key="show_details")
 
+        # Aplicar el estilo al checkbox
+        st.markdown(
+            """
+            <style>
+            div[data-testid="stHorizontalBlock"] > div:nth-child(2) > div {
+                margin-top: -10px; /* Ajusta este valor según sea necesario */
+                margin-left: -20px;
+            }
+            </style>
+            """,
+            unsafe_allow_html=True
+        )
+    
     if detect_button:
         # Reset the state when the detect button is clicked
         st.session_state.predictions = []
@@ -320,7 +345,7 @@ def display_approach():
 
 def main():
     st.sidebar.title("Navigation")
-    page = st.sidebar.selectbox("Go to", ["Home", "About the Problem", "Our Approach", "About Us"])
+    page = st.sidebar.radio("Go to", ["Home", "About the Problem", "Our Approach", "About Us"])
 
     if page == "Home":
         display_home()
