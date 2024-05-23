@@ -73,7 +73,7 @@ def detect_language(text):
 def display_home():
     st.title("Detect AI Content")
 
-    st.warning("Due to limited resources, the prediction may take some time (5s +-).")
+    # st.warning("Due to limited resources, the prediction may take some time (5s +-).")
 
     text = st.text_area("Enter your text:", height=200)
 
