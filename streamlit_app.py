@@ -8,7 +8,7 @@ import gdown
 from py3langid.langid import LanguageIdentifier, MODEL_FILE
 import nltk
 
-nltk.download('punkt')
+# nltk.download('punkt')
 
 cache = {
     "models": {},
