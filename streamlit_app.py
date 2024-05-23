@@ -70,14 +70,25 @@ def detect_language(text):
 
     return identifier.classify(text)[0]
 
+#  st.warning("Due to limited resources, the prediction may take some time (5s +-).")
+
 def display_home():
     st.title("Detect AI Content")
 
-    # st.warning("Due to limited resources, the prediction may take some time (5s +-).")
-
     text = st.text_area("Enter your text:", height=200)
 
-    if st.button("Detect AI Content"):
+    col1, col2 = st.columns([1, 3])
+    with col1:
+        detect_button = st.button("Detect AI Content")
+    with col2:
+        show_details = st.checkbox("More details", key="show_details")
+
+    if detect_button:
+        # Reset the state when the detect button is clicked
+        st.session_state.predictions = []
+        st.session_state.ai_content_percentage = None
+        st.session_state.show_info = False
+
         if text and len(text) > 250:
             detected_language = detect_language(text)
             model, word2idx = load_model_and_word2idx(detected_language)
@@ -85,26 +96,50 @@ def display_home():
             paragraphs = text.split('\n\n')
             total_paragraphs = 0
             ai_paragraph_count = 0  # Contador para los párrafos generados por IA
-            
-            st.markdown("<div style='text-align: center;'>AI-generated paragraphs are highlighted in <span style='color: red; font-weight: bold;'>red</span>, human-generated paragraphs are in <span style='color: green; font-weight: bold;'>green</span>.</div>", unsafe_allow_html=True)
-            
+
             for paragraph in paragraphs:
                 if paragraph.strip() != "":
                     total_paragraphs += 1
                     ai_probability = predict(paragraph, model, word2idx)
+                    st.session_state.predictions.append((paragraph, ai_probability))
                     if ai_probability > 99:
-                        st.markdown(f"<div style='background-color: rgba(255, 0, 0, 0.05); color: red; padding: 8px; border-radius: 5px;'>{paragraph}</div>", unsafe_allow_html=True)
                         ai_paragraph_count += 1  # Incrementar el contador si el párrafo fue generado por IA
-                    else:
-                        st.markdown(f"<div style='background-color: rgba(0, 255, 0, 0.05); color: green; padding: 8px; border-radius: 5px;'>{paragraph}</div>", unsafe_allow_html=True)
             
             # Calcular el porcentaje de párrafos generados por IA
             ai_content_percentage = (ai_paragraph_count / total_paragraphs) * 100
-            st.markdown(f"<div style='text-align: center; padding: 20px;'>AI content percentage: {ai_content_percentage:.2f}%</div>", unsafe_allow_html=True)
-            
+            st.session_state.ai_content_percentage = ai_content_percentage
+            st.session_state.show_info = True
         else:
             error_message = "Please enter text with more than 250 characters before detecting AI content." if not text else "Text must be longer than 250 characters."
             st.error(error_message)
+    
+    if st.session_state.get('show_info', False):
+        st.markdown("<div style='text-align: center;'>AI-generated paragraphs are highlighted in <span style='color: red; font-weight: bold;'>red</span>, human-generated paragraphs are in <span style='color: green; font-weight: bold;'>green</span>.</div>", unsafe_allow_html=True)
+
+    if "predictions" in st.session_state:
+        for paragraph, ai_probability in st.session_state.predictions:
+            if st.session_state.show_details:
+                probability_text = f"<b>Probability: {int(ai_probability)}%</b>"
+            else:
+                probability_text = ""
+
+            if ai_probability > 99:
+                st.markdown(
+                    f"<div style='display: flex; align-items: center;'>"
+                    f"<div style='background-color: rgba(255, 0, 0, 0.05); color: red; padding: 8px; border-radius: 5px; flex: 1;'>{paragraph}</div>"
+                    f"<div style='color: red; margin-left: 10px;'>{probability_text}</div>"
+                    f"</div>", unsafe_allow_html=True
+                )
+            else:
+                st.markdown(
+                    f"<div style='display: flex; align-items: center;'>"
+                    f"<div style='background-color: rgba(0, 255, 0, 0.05); color: green; padding: 8px; border-radius: 5px; flex: 1;'>{paragraph}</div>"
+                    f"<div style='color: green; margin-left: 10px;'>{probability_text}</div>"
+                    f"</div>", unsafe_allow_html=True
+                )
+
+    if "ai_content_percentage" in st.session_state and st.session_state.ai_content_percentage is not None:
+        st.markdown(f"<div style='text-align: center; padding: 20px;'>AI content percentage: {st.session_state.ai_content_percentage:.2f}%</div>", unsafe_allow_html=True)
 
 def display_problem():
     st.title("About the Problem")
